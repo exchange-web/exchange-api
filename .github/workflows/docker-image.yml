@@ -40,4 +40,4 @@ jobs:
         tags: ${{ secrets.DOCKER_USERNAME }}/back:${{ github.run_id }}
 
     - name: Run Docker Compose
-      run: docker-compose up -d
+      run: docker compose up 
