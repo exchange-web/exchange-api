@@ -32,12 +32,14 @@ jobs:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
 
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/test
+    - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          provenance: true
+          sbom: true
 
     - name: Run Docker Compose
       run: docker-compose up -d
