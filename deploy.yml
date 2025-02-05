@@ -16,6 +16,7 @@
         url: "https://github.com/docker/compose/releases/download/v2.32.4/docker-compose-darwin-aarch64"
         dest: /usr/local/bin/docker-compose
         mode: '0777+x'
+      executable: true
 
     - name: Pull Docker images
       command: docker-compose pull
