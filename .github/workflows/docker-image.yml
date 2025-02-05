@@ -10,11 +10,15 @@ jobs:
 
   build:
 
+
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Check running containers
+      run: docker ps -a
+    
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag back:${{ github.run_id }}
 
@@ -50,3 +54,26 @@ jobs:
 
     - name: Check running containers
       run: docker ps -a
+  
+  deploy:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Install sshpass
+          run: sudo apt-get install -y sshpass
+  
+        - name: Set up Ansible
+          uses: dawidd6/action-install-ansible@v2
+  
+        - name: Set up SSH
+          run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+  
+        - name: Run Ansible playbook
+          run: ansible-playbook -i inventory.ini deploy.yml
+          env:
+            ANSIBLE_HOST_KEY_CHECKING: "False"
