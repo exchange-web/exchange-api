@@ -11,21 +11,14 @@
         name: docker.io
         state: present
 
-    - name: Install Docker Compose
+       - name: Install Docker Compose
       get_url:
-        url: "https://github.com/docker/compose/releases/download/v2.32.4/docker-compose-darwin-aarch64"
-        dest: /usr/local/bin/docker-compose
-        mode: '0777+x'
-        executable: true
-
+        url: "https://github.com/docker/compose/releases/download/v2.32.4/docker-compose-linux-x86_64"  # URL для загрузки docker-compose
+        dest: /usr/local/bin/docker-compose   # Место установки файла docker-compose
+        mode: '0755'   # Присвоение прав на исполнение файлу docker-compose
+        
     - name: Pull Docker images
-      command: docker-compose pull
-      args:
-        chdir: /var/back/app  # Заменить на путь к папке с docker-compose.yml
-
+      command: cd /var/back/app && docker-compose pull  # Переход в директорию с docker-compose и запуск команды pull для Docker Compose
+      
     - name: Restart containers
-      command: docker-compose up -d
-      args:
-        chdir: /var/back/app  # Заменить на путь к папке с docker-compose.yml
-
-
+      command: cd /var/back/app && docker-compose up -d
