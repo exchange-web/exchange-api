@@ -19,12 +19,12 @@
       register: docker_compose_release
       loop: "{{ lookup('url', 'https://api.github.com/repos/docker/compose/releases/latest').json | json_query('assets[]') }}"
 
-      - name: Install Docker Compose
-        get_url:
-          url: "{{ item.browser_download_url }}"
-          dest: /usr/local/bin/docker-compose
-          mode: '0755'
-        loop: "{{ docker_compose_release.results[0].content.json | json_query('assets[]') }}"
+    - name: Install Docker Compose
+      get_url:
+        url: "{{ item.browser_download_url }}"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+     loop: "{{ docker_compose_release.results[0].content.json | json_query('assets[]') }}"
 
     - name: Pull Docker images
       command: docker-compose pull
