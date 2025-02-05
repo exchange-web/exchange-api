@@ -62,16 +62,12 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
-        
 
     @property
     def is_staff(self):
         return self.is_admin or self.is_operator
 
     def save(self, *args, **kwargs):
-        if not self.first_name or not self.last_name or not self.phone_number or not self.unique_user_id and not self.is_admin and not self.is_operator:
-            raise ValueError('First name, last name, phone number, and unique user ID are required fields')
-        
         if not self.unique_user_id:
             self.unique_user_id = f"{self.first_name}{self.last_name}{uuid.uuid4()}"
         
