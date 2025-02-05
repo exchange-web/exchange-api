@@ -11,20 +11,18 @@
         name: docker.io
         state: present
 
-    - name: Get latest release of Docker Compose
+    - name: Get and install latest release of Docker Compose
       uri:
-        url: "{{ item.url }}"
+        url: "{{ lookup('url', 'https://api.github.com/repos/docker/compose/releases/latest').json | json_query('assets[].browser_download_url') }}"
         method: GET
         return_content: true
       register: docker_compose_release
-      loop: "{{ lookup('url', 'https://api.github.com/repos/docker/compose/releases/latest').json | json_query('assets[]') }}"
     
     - name: Install Docker Compose
       get_url:
-        url: "{{ item.browser_download_url }}"
+        url: "{{ docker_compose_release.content }} "
         dest: /usr/local/bin/docker-compose
         mode: '0755'
-      loop: "{{ docker_compose_release.results[0].content.json | json_query('assets[]') }}"
 
     - name: Pull Docker images
       command: docker-compose pull
