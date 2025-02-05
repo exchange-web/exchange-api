@@ -1,7 +1,6 @@
 from django.db import models
 from clients.models import Client
 from currencies.models import Currency
-from common.get_exchange_rate import get_exchange_rate
 
 class DataEntry(models.Model):
     TRANSACTION_TYPES = (
@@ -21,11 +20,11 @@ class DataEntry(models.Model):
     date_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        self.cross_rate = get_exchange_rate(self.currency_in.code if "USDT" in self.currency_out.code else self.currency_out.code)
-        if self.transaction_type == 'income':
-            self.amount_out = float(self.amount_in) * self.cross_rate
-        else:
-            self.amount_out = float(self.amount_in) / self.cross_rate
+        #self.cross_rate = get_exchange_rate(self.currency_in.code if "USDT" in self.currency_out.code else self.currency_out.code)
+        try:
+            self.cross_rate = self.amount_in/self.amount_out
+        except Exception as e:
+            self.cross_rate = 0
         super(DataEntry, self).save(*args, **kwargs)
 
     def __str__(self):

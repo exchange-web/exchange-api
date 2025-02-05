@@ -113,8 +113,8 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # Add this line to read the API key
 API_KEY = env('API_KEY')
 
-XE_ACCOUNT_ID = env('XE_ACCOUNT_ID')
-XE_API_KEY = env('XE_API_KEY')
+#XE_ACCOUNT_ID = env('XE_ACCOUNT_ID')
+#XE_API_KEY = env('XE_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
