@@ -18,7 +18,7 @@
         mode: '0755'   # Присвоение прав на исполнение файлу docker-compose
         
     - name: Pull Docker images
-      command: cd /var/back/app && docker-compose pull  # Переход в директорию с docker-compose и запуск команды pull для Docker Compose
+      command: docker-compose pull  # Переход в директорию с docker-compose и запуск команды pull для Docker Compose
       
     - name: Restart containers
-      command: cd /var/back/app && docker-compose up -d
+      command: docker-compose up -d
