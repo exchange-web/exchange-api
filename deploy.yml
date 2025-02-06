@@ -18,7 +18,10 @@
         mode: '0755'   # Присвоение прав на исполнение файлу docker-compose
         
     - name: Pull Docker images
-      command: ls -l && cd /var/back/app && docker compose pull 
+      shell: |
+        cd /var/back/app && docker compose pull
+      args:
+        chdir: "/var/back/app" 
       
     - name: Restart containers
       command: docker compose up -d
