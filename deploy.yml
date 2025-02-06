@@ -40,7 +40,7 @@
         var: running_containers1.stdout_lines
 
     - name: Stop and remove existing Docker containers
-      command: docker rm -f postgres
+      command: docker rm -f postgres exchange_local_web
       ignore_errors: yes
       
     - name: Restart containers
