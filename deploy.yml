@@ -24,4 +24,5 @@
         chdir: "/var/back/app" 
       
     - name: Restart containers
-      command: docker compose up -d
+      shell: |
+        cd /var/back/app && docker compose up -d
