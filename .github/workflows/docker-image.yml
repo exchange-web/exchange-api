@@ -10,11 +10,15 @@ jobs:
 
   build:
 
+
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Check running containers
+      run: docker ps -a
+    
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag back:${{ github.run_id }}
 
@@ -39,14 +43,29 @@ jobs:
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ secrets.DOCKER_USERNAME }}/back:${{ github.run_id }}
 
-    - name: Run Docker Compose
-      run: docker compose up -d
+  
+  deploy:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
 
-
-    - name: Sleep
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '60s' 
-
-    - name: Check running containers
-      run: docker ps -a
+        - name: Install sshpass
+          run: sudo apt-get install -y sshpass
+  
+        - name: Install dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y python3 python3-pip
+            pip3 install ansible
+  
+        - name: Set up SSH
+          run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+  
+        - name: Run Ansible playbook
+          run: ansible-playbook -i inventory.ini deploy.yml
+          env:
+            ANSIBLE_HOST_KEY_CHECKING: "False"

@@ -1,0 +1,48 @@
+- hosts: back_server  # Заменить на имя группы хостов (из inventory.ini)
+  tasks:
+    - name: Clone the repository
+      git:
+        repo: 'https://github.com/exchange-web/exchange-api'  # Заменить на URL твоего репозитория
+        dest: /var/back/app  # Заменить на путь, куда клонировать репозиторий
+        version: main  # Заменить на нужную ветку
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Install Docker Compose
+      get_url:
+        url: "https://github.com/docker/compose/releases/download/v2.32.4/docker-compose-linux-x86_64"  # URL для загрузки docker-compose
+        dest: /usr/local/bin/docker-compose   # Место установки файла docker-compose
+        mode: '0755'   # Присвоение прав на исполнение файлу docker-compose
+
+        
+
+    - name: Show running docker containers
+      command: docker ps
+      register: running_containers
+    
+    - debug:
+        var: running_containers.stdout_lines
+        
+    - name: Pull Docker images
+      shell: |
+        cd /var/back/app && docker compose pull
+      args:
+        chdir: "/var/back/app" 
+
+    - name: Show running docker containers2
+      command: docker ps
+      register: running_containers1
+    
+    - debug:
+        var: running_containers1.stdout_lines
+
+    - name: Stop and remove existing Docker containers
+      command: docker rm -f postgres exchange_local_web
+      ignore_errors: yes
+      
+    - name: Restart containers
+      shell: |
+        cd /var/back/app && docker compose up -d
